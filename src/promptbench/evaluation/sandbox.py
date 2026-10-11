@@ -1,4 +1,4 @@
-"""Ejecucion acotada de tests generados para datasets de confianza."""
+"""Bounded execution of generated tests for trusted datasets."""
 
 import ast
 import subprocess
@@ -13,7 +13,7 @@ from promptbench.domain import EvaluationCase
 
 @dataclass(frozen=True, slots=True)
 class TestExecution:
-    """Resultado de ejecutar pytest sobre un unico caso generado."""
+    """Result of running pytest for one generated case."""
 
     exit_code: int
     stdout: str
@@ -23,7 +23,7 @@ class TestExecution:
 
 
 def normalize_generated_test_code(generated_test_code: str) -> str:
-    """Elimina fences Markdown habituales sin modificar el codigo interno."""
+    """Remove common Markdown fences without changing the inner code."""
     code = generated_test_code.strip()
 
     if code.startswith("```python"):
@@ -38,26 +38,26 @@ def normalize_generated_test_code(generated_test_code: str) -> str:
 
 
 def run_generated_tests(case: EvaluationCase, generated_test_code: str) -> TestExecution:
-    """Escribe archivos temporales y ejecuta pytest.
+    """Write temporary files and run pytest.
 
-    Seguridad: nunca uses shell=True ni ejecutes casos no confiables. Esta version
-    evalua solo ejemplos sinteticos del repositorio; aislar codigo hostil exige
-    contenedores o una maquina dedicada, no solo un directorio temporal.
+    Security: never use shell=True or run untrusted cases. This version evaluates
+    only the repository's synthetic examples; isolating hostile code requires
+    containers or a dedicated machine, not only a temporary directory.
     """
 
     normalized_code = normalize_generated_test_code(generated_test_code)
     if not normalized_code:
-        return _invalid_test_result("El modelo no genero tests (respuesta vacia).")
+        return _invalid_test_result("The model did not generate tests (empty response).")
 
     try:
         syntax_tree = ast.parse(normalized_code)
     except SyntaxError as error:
         return _invalid_test_result(
-            f"Codigo generado invalido: error de sintaxis en linea {error.lineno}: {error.msg}"
+            f"Invalid generated code: syntax error on line {error.lineno}: {error.msg}"
         )
 
     if not _contains_test_function(syntax_tree):
-        return _invalid_test_result("El modelo no genero tests: falta una funcion test_.")
+        return _invalid_test_result("The model did not generate tests: no test_ function found.")
 
     with TemporaryDirectory() as temp_dir:
         work_dir = Path(temp_dir)

@@ -1,1 +1,1 @@
-"""Adaptadores para proveedores de modelos de lenguaje."""
+"""Interfaces for LLM providers."""

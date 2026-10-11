@@ -1,4 +1,4 @@
-"""Pruebas para la carga de datasets JSONL."""
+"""Tests for JSONL dataset loading."""
 
 import json
 from pathlib import Path
@@ -37,7 +37,7 @@ def test_load_cases_reports_the_line_of_invalid_json(tmp_path: Path) -> None:
     with pytest.raises(ValueError) as error:
         load_cases(dataset_path)
 
-    assert "linea 2" in str(error.value)
+    assert "line 2" in str(error.value)
 
 
 @pytest.mark.parametrize(
@@ -66,5 +66,5 @@ def test_load_cases_rejects_unsafe_or_duplicate_filenames(
     dataset_path = tmp_path / "dataset.jsonl"
     dataset_path.write_text(json.dumps(case_data), encoding="utf-8")
 
-    with pytest.raises(ValueError, match="linea 1"):
+    with pytest.raises(ValueError, match="line 1"):
         load_cases(dataset_path)

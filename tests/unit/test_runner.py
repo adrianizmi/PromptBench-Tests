@@ -1,4 +1,4 @@
-"""Pruebas para la orquestacion de experimentos."""
+"""Tests for experiment orchestration."""
 
 from pathlib import Path
 
@@ -8,7 +8,7 @@ from promptbench.prompts.zero_shot import ZeroShotPromptStrategy
 
 
 class FakeProvider:
-    """Proveedor determinista para probar el runner sin llamar a un LLM real."""
+    """Deterministic provider for testing the runner without calling a real LLM."""
 
     def generate(self, prompt: str, config: GenerationConfig) -> GeneratedResponse:
         return GeneratedResponse(
@@ -23,7 +23,7 @@ def test_even_number():
 
 
 class FailOnSecondProvider(FakeProvider):
-    """Simula un timeout despues de completar un caso."""
+    """Simulate a timeout after completing one case."""
 
     def __init__(self) -> None:
         self.calls = 0
@@ -38,7 +38,7 @@ class FailOnSecondProvider(FakeProvider):
 def test_run_experiment_generates_and_executes_tests(tmp_path: Path) -> None:
     dataset_path = tmp_path / "dataset.jsonl"
     dataset_path.write_text(
-        '{"id":"is-even","description":"Comprueba pares.",'
+        '{"id":"is-even","description":"Check even and odd values.",'
         '"source_filename":"number_utils.py",'
         '"source_code":"def is_even(value: int) -> bool:\\n    return value % 2 == 0\\n",'
         '"test_filename":"test_number_utils.py",'
@@ -88,7 +88,7 @@ def test_run_experiment_keeps_completed_cases_after_provider_timeout(tmp_path: P
     assert result.cases[0].passed is True
     assert result.cases[1].passed is False
     assert result.cases[1].generation is None
-    assert "tiempo de espera" in (result.cases[1].error or "").lower()
+    assert "timed out" in (result.cases[1].error or "").lower()
     assert result.cases[1].execution.timed_out is False
     assert result.pass_rate == 0.5
     assert result.dataset_content == dataset_path.read_text(encoding="utf-8")

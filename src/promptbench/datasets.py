@@ -1,4 +1,4 @@
-"""Carga y validacion de datasets de evaluacion."""
+"""Loading and validation for evaluation datasets."""
 
 import json
 from pathlib import Path
@@ -17,11 +17,11 @@ REQUIRED_FIELDS = (
 
 
 def load_cases(dataset_path: Path) -> list[EvaluationCase]:
-    """Carga casos de evaluacion desde un fichero JSONL."""
+    """Load evaluation cases from a JSONL file."""
     if not dataset_path.exists():
-        raise FileNotFoundError(f"No existe el dataset: {dataset_path}")
+        raise FileNotFoundError(f"Dataset does not exist: {dataset_path}")
     if not dataset_path.is_file():
-        raise ValueError(f"La ruta no es un fichero: {dataset_path}")
+        raise ValueError(f"Path is not a file: {dataset_path}")
 
     cases: list[EvaluationCase] = []
     with dataset_path.open(encoding="utf-8") as dataset_file:
@@ -34,7 +34,7 @@ def load_cases(dataset_path: Path) -> list[EvaluationCase]:
                 cases.append(_parse_case(raw_case, line_number))
             except json.JSONDecodeError as error:
                 raise ValueError(
-                    f"Error de formato JSON en la linea {line_number}: {error}"
+                    f"Invalid JSON format on line {line_number}: {error}"
                 ) from error
 
     return cases
@@ -42,22 +42,22 @@ def load_cases(dataset_path: Path) -> list[EvaluationCase]:
 
 def _parse_case(raw_case: Any, line_number: int) -> EvaluationCase:
     if not isinstance(raw_case, dict):
-        raise TypeError(f"El objeto de la linea {line_number} debe ser un JSON object.")
+        raise TypeError(f"Object on line {line_number} must be a JSON object.")
 
     case_data = cast(dict[str, Any], raw_case)
-    case_id = case_data.get("id", "<sin id>")
+    case_id = case_data.get("id", "<missing id>")
     for field in REQUIRED_FIELDS:
         if field not in case_data:
             raise ValueError(
-                f"Falta el campo {field!r} en el objeto de la linea {line_number}, "
-                f"caso {case_id}"
+                f"Missing field {field!r} in object on line {line_number}, "
+                f"case {case_id}"
             )
 
     tags = case_data["tags"]
     if not isinstance(tags, list) or not all(isinstance(tag, str) for tag in tags):
         raise ValueError(
-            f"El campo 'tags' debe ser una lista de strings en la linea {line_number}, "
-            f"caso {case_id}"
+            f"Field 'tags' must be a list of strings on line {line_number}, "
+            f"case {case_id}"
         )
 
     try:
@@ -71,7 +71,7 @@ def _parse_case(raw_case: Any, line_number: int) -> EvaluationCase:
         )
     except ValueError as error:
         raise ValueError(
-            f"Caso invalido en la linea {line_number}, caso {case_id}: {error}"
+            f"Invalid case on line {line_number}, case {case_id}: {error}"
         ) from error
 
 
@@ -79,6 +79,6 @@ def _require_str(raw_case: dict[str, Any], field: str, line_number: int, case_id
     value = raw_case[field]
     if not isinstance(value, str):
         raise TypeError(
-            f"El campo {field!r} debe ser un string en la linea {line_number}, caso {case_id}"
+            f"Field {field!r} must be a string on line {line_number}, case {case_id}"
         )
     return value

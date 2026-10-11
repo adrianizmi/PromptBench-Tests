@@ -1,4 +1,4 @@
-"""Estrategia zero-shot para generar tests Python."""
+"""Zero-shot strategy for generating Python tests."""
 
 from pathlib import Path
 
@@ -7,59 +7,59 @@ from promptbench.prompts.base import PromptStrategy
 
 
 class ZeroShotPromptStrategy(PromptStrategy):
-    """Estrategia que construye prompts sin ejemplos previos."""
+    """A strategy that builds prompts without prior examples."""
 
     def build(self, case: EvaluationCase) -> str:
-        """Devuelve el prompt zero-shot para un caso de evaluacion."""
+        """Return the zero-shot prompt for an evaluation case."""
         return build_zero_shot_prompt(case)
 
 
 def build_zero_shot_prompt(case: EvaluationCase) -> str:
-    """Construye un prompt sin ejemplos previos."""
+    """Build a prompt without prior examples."""
     module_name = Path(case.source_filename).stem
 
     return f"""
-Eres un desarrollador experto en tests automatizados con pytest en Python.
+You are an expert Python developer specializing in automated pytest tests.
 
-Tu objetivo es escribir tests del siguiente codigo.
+Your goal is to write tests for the following code.
 
-Descripcion:
+Description:
 {case.description}
 
-Archivo de codigo:
+Source file:
 {case.source_filename}
 
-Modulo Python que debes importar:
+Python module to import:
 {module_name}
 
-Reglas de importacion:
-- Importa siempre las funciones necesarias desde el modulo {module_name}.
-- Usa imports con este formato: from {module_name} import <funciones_necesarias>
-- No asumas que las funciones existen en el entorno global.
-- Incluye los imports explicitos al inicio del archivo de test.
+Import rules:
+- Always import the required functions from the {module_name} module.
+- Use imports in this format: from {module_name} import <required_functions>
+- Do not assume functions exist in the global environment.
+- Include explicit imports at the beginning of the test file.
 
-Requisitos de los tests:
-- Escribe al menos una funcion cuyo nombre empiece por test_.
-- Cada funcion de test debe contener al menos una asercion.
-- Escribe entre una y tres funciones de test, con un maximo de cinco aserciones en total.
-- Comprueba valores normales y, si procede, uno o dos casos limite representativos.
-- Usa entradas pequenas y evita repetir comprobaciones equivalentes.
-- No te limites a escribir los imports: la respuesta debe incluir el cuerpo de los tests.
-- Usa solo funciones y comportamientos que aparezcan en el codigo o la descripcion.
-- Asegurate de cerrar parentesis y corchetes y de terminar el archivo con codigo Python completo.
+Test requirements:
+- Write at least one function whose name starts with test_.
+- Each test function must contain at least one assertion.
+- Write between one and three test functions, with at most five assertions in total.
+- Check normal values and, where applicable, one or two representative edge cases.
+- Use small inputs and avoid repeating equivalent checks.
+- Do not only write imports: the response must include the test bodies.
+- Use only functions and behavior that appear in the code or description.
+- Make sure parentheses and brackets are closed, and finish with complete Python code.
 
-Codigo:
+Code:
 {case.source_code}
 
-Archivo de test a generar:
+Test file to generate:
 {case.test_filename}
 
-Formato de salida obligatorio:
-- Devuelve exclusivamente codigo Python valido.
-- La primera linea de tu respuesta debe ser una sentencia Python, un import o una definicion.
-- La respuesta debe incluir al menos una funcion test_ con aserciones ejecutables.
-- No incluyas Markdown.
-- No incluyas bloques ```python.
-- No incluyas bloques ```.
-- No incluyas explicaciones antes ni despues del codigo.
+Required output format:
+- Return valid Python code only.
+- The first line of your response must be a Python statement, an import, or a definition.
+- The response must include at least one test_ function with executable assertions.
+- Do not include Markdown.
+- Do not include ```python blocks.
+- Do not include ``` blocks.
+- Do not include explanations before or after the code.
 """.strip()

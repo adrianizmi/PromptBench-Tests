@@ -1,4 +1,4 @@
-"""Contrato comun de una estrategia de prompt."""
+"""Contract shared by prompt strategies."""
 
 from typing import Protocol
 
@@ -6,8 +6,8 @@ from promptbench.domain import EvaluationCase
 
 
 class PromptStrategy(Protocol):
-    """Construye un prompt reproducible para un caso de evaluacion."""
+    """Build a reproducible prompt for an evaluation case."""
 
     def build(self, case: EvaluationCase) -> str:
-        """Devuelve el texto que se enviara literalmente al modelo."""
+        """Return the literal text sent to the model."""
         ...

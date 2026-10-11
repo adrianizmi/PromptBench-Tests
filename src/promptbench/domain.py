@@ -1,11 +1,11 @@
-"""Modelos de datos que viajan entre las capas del experimento."""
+"""Data models exchanged between experiment layers."""
 
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True, slots=True)
 class EvaluationCase:
-    """Representa una unidad inmutable de evaluacion leida del dataset."""
+    """An immutable evaluation unit read from the dataset."""
 
     id: str
     description: str
@@ -15,7 +15,7 @@ class EvaluationCase:
     tags: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        """Garantiza que los nombres temporales sean archivos Python simples."""
+        """Ensure temporary filenames are simple Python files."""
         for field_name, filename in (
             ("source_filename", self.source_filename),
             ("test_filename", self.test_filename),
@@ -26,16 +26,16 @@ class EvaluationCase:
                 or any(separator in filename for separator in ("/", "\\", ":", "\0"))
             ):
                 raise ValueError(
-                    f"{field_name} debe ser un nombre de archivo .py sin directorios."
+                    f"{field_name} must be a .py filename without directories."
                 )
 
         if self.source_filename.casefold() == self.test_filename.casefold():
-            raise ValueError("source_filename y test_filename deben ser distintos.")
+            raise ValueError("source_filename and test_filename must be different.")
 
 
 @dataclass(frozen=True, slots=True)
 class GenerationConfig:
-    """Parametros que pueden afectar a una generacion del modelo."""
+    """Parameters that can affect model generation."""
 
     model: str
     temperature: float = 0.0
@@ -45,7 +45,7 @@ class GenerationConfig:
 
 @dataclass(frozen=True, slots=True)
 class GeneratedResponse:
-    """Salida normalizada de cualquier proveedor de LLM."""
+    """Normalized output from any LLM provider."""
 
     text: str
     latency_ms: float

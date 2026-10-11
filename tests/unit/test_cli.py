@@ -1,4 +1,4 @@
-"""Pruebas para helpers de serializacion de la CLI."""
+"""Tests for CLI serialization helpers."""
 
 from promptbench.cli import _experiment_result_to_dict
 from promptbench.domain import GeneratedResponse, GenerationConfig

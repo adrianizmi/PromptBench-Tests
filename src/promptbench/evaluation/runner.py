@@ -1,4 +1,4 @@
-"""Orquestacion de un experimento sobre un dataset completo."""
+"""Orchestration for an experiment over a complete dataset."""
 
 from dataclasses import dataclass
 from hashlib import sha256
@@ -14,7 +14,7 @@ from promptbench.providers.base import LLMProvider
 
 @dataclass(frozen=True, slots=True)
 class ExperimentConfig:
-    """Configuracion reproducible de un experimento."""
+    """Reproducible experiment configuration."""
 
     dataset_path: Path
     generation: GenerationConfig
@@ -23,7 +23,7 @@ class ExperimentConfig:
 
 @dataclass(frozen=True, slots=True)
 class CaseRunResult:
-    """Resultado completo de ejecutar un caso del dataset."""
+    """Complete result of running one dataset case."""
 
     case_id: str
     prompt: str
@@ -33,7 +33,7 @@ class CaseRunResult:
 
     @property
     def passed(self) -> bool:
-        """Indica si los tests generados pasaron sin timeout."""
+        """Whether generated tests passed without timing out."""
         return (
             self.error is None
             and self.generation is not None
@@ -44,7 +44,7 @@ class CaseRunResult:
 
 @dataclass(frozen=True, slots=True)
 class ExperimentResult:
-    """Resultado agregado de un experimento."""
+    """Aggregated result of an experiment."""
 
     strategy_name: str
     model: str
@@ -61,7 +61,7 @@ def run_experiment(
     strategy: PromptStrategy,
     provider: LLMProvider,
 ) -> ExperimentResult:
-    """Coordina carga, prompting, generacion, ejecucion y metricas."""
+    """Coordinate loading, prompting, generation, execution, and metrics."""
     dataset_content = config.dataset_path.read_text(encoding="utf-8")
     dataset_hash = sha256(dataset_content.encode("utf-8")).hexdigest()
     cases = load_cases(config.dataset_path)
@@ -73,10 +73,10 @@ def run_experiment(
             generation = provider.generate(prompt, config.generation)
         except Exception as error:  # noqa: BLE001 - provider failures become case results.
             if isinstance(error, TimeoutError) or "timeout" in type(error).__name__.lower():
-                message = "Tiempo de espera agotado al solicitar la generacion al proveedor."
+                message = "Timed out while requesting a generation from the provider."
             else:
                 detail = str(error).strip()
-                message = f"Fallo del proveedor ({type(error).__name__})"
+                message = f"Provider failed ({type(error).__name__})"
                 if detail:
                     message += f": {detail}"
 
@@ -129,10 +129,10 @@ def run_experiment(
 
 def _execution_error(execution: TestExecution) -> str:
     if execution.timed_out:
-        return "La ejecucion de los tests supero el tiempo limite."
+        return "Generated tests exceeded the time limit."
     diagnostic = execution.stdout or execution.stderr
-    if "no se generaron tests" in diagnostic.lower():
-        return "El modelo no genero ninguna funcion de test ejecutable."
-    if "codigo generado invalido" in diagnostic.lower():
-        return "El modelo genero codigo Python invalido."
-    return "Los tests generados no pasaron."
+    if "no tests were generated" in diagnostic.lower():
+        return "The model did not generate an executable test function."
+    if "invalid generated code" in diagnostic.lower():
+        return "The model generated invalid Python code."
+    return "Generated tests did not pass."

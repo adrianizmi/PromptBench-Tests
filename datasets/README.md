@@ -1,14 +1,14 @@
-# Dataset de evaluacion
+# Evaluation Dataset
 
-Cada linea de `v1.jsonl` es un objeto JSON independiente. El dataset contiene cinco casos pequenos: paridad, normalizacion de texto, limites numericos, eliminacion de duplicados conservando el orden y conteo de vocales.
+Each line in `v1.jsonl` is an independent JSON object. The dataset contains five small cases: parity, text normalization, numeric bounds, duplicate removal while preserving order, and vowel counting.
 
-Campos iniciales:
+Required fields:
 
-- `id`: identificador unico y estable.
-- `description`: comportamiento que los tests deben comprobar.
-- `source_filename`: nombre con el que se escribira el codigo temporalmente.
-- `source_code`: implementacion Python bajo prueba.
-- `test_filename`: nombre esperado para el archivo generado por el modelo.
-- `tags`: categorias para segmentar resultados despues.
+- `id`: a unique, stable identifier.
+- `description`: behavior the tests must verify.
+- `source_filename`: filename used when writing the code temporarily.
+- `source_code`: Python implementation under test.
+- `test_filename`: expected filename for the model-generated test.
+- `tags`: categories for later result segmentation.
 
-Los casos deben ser pequenos, deterministas y sinteticos. Los nombres de archivo deben ser nombres simples como `module.py`, sin directorios. No incluyas secretos, datos personales ni codigo corporativo.
+Cases must be small, deterministic, and synthetic. Filenames must be simple names such as `module.py`, with no directories. Do not include secrets, personal data, or corporate code.

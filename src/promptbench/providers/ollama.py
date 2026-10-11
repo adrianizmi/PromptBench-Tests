@@ -1,4 +1,4 @@
-"""Cliente HTTP minimo para la instancia local de Ollama."""
+"""Minimal HTTP client for a local Ollama instance."""
 
 import time
 
@@ -8,13 +8,13 @@ from promptbench.domain import GeneratedResponse, GenerationConfig
 
 
 class OllamaProvider:
-    """Adaptador para la API local expuesta por Docker Compose."""
+    """Adapter for the local API exposed by Docker Compose."""
 
     def __init__(self, base_url: str = "http://localhost:11434") -> None:
         self._base_url = base_url
 
     def generate(self, prompt: str, config: GenerationConfig) -> GeneratedResponse:
-        """Llama a POST /api/generate y normaliza la respuesta."""
+        """Call POST /api/generate and normalize the response."""
         start = time.perf_counter()
 
         with httpx.Client(timeout=config.timeout_seconds) as client:
@@ -37,14 +37,14 @@ class OllamaProvider:
 
             payload = response.json()
             if not isinstance(payload, dict):
-                raise TypeError("La respuesta de Ollama no es un objeto JSON.")
+                raise TypeError("Ollama response is not a JSON object.")
 
             if "response" not in payload:
-                raise ValueError("La respuesta de Ollama no contiene el campo 'response'.")
+                raise ValueError("Ollama response does not contain the 'response' field.")
 
             generated_text = payload["response"]
             if not isinstance(generated_text, str):
-                raise TypeError("El campo 'response' de Ollama no es texto.")
+                raise TypeError("Ollama 'response' field is not text.")
 
             return GeneratedResponse(
                 text=generated_text,

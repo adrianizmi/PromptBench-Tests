@@ -1,12 +1,12 @@
-# Ejemplo de resultado
+# Example Result
 
-`zero-shot-result.json` es la salida de PromptBench al ejecutar `datasets/v1.jsonl` con `qwen2.5-coder:1.5b` mediante Ollama el 4 de octubre de 2026, usando el prompt actual y un maximo de 256 tokens por respuesta.
+`zero-shot-result.json` is a PromptBench result produced by running `datasets/v1.jsonl` with `qwen2.5-coder:1.5b` through Ollama on October 4, 2026, using the current prompt and a maximum of 256 tokens per response.
 
-En esa ejecucion pasaron 4 de 5 casos (80%). Los cinco casos generaron tests ejecutables. El fallo de `count-vowels` se debe a que el modelo esperaba 6 vocales en `"Python Programming"`, mientras que el codigo bajo prueba devuelve 4.
+That run passed 4 out of 5 cases (80%). All five cases generated executable tests. The `count-vowels` failure occurred because the model expected 6 vowels in `"Python Programming"`, while the code under test returns 4.
 
-El resultado conserva los prompts, respuestas, latencias y salida de pytest, ademas del contenido exacto y hash SHA-256 del dataset y los parametros de generacion, incluido `max_tokens`. Una unica ejecucion con un modelo pequeno no permite concluir que el prompt o el modelo se comportaran igual en otros intentos.
+The result retains prompts, responses, latencies, and pytest output, as well as the dataset's exact content and SHA-256 hash and generation parameters, including `max_tokens`. A single run with a small model cannot establish that the prompt or model will behave the same way on later attempts.
 
-Para generar otro resultado:
+To generate another result:
 
 ```powershell
 .\.venv\Scripts\python.exe -m promptbench.cli run --dataset datasets/v1.jsonl --model qwen2.5-coder:1.5b --timeout 180 --max-tokens 256 --output examples/zero-shot-result.json

@@ -1,4 +1,4 @@
-"""Prueba de integracion del proveedor Ollama."""
+"""Integration test for the Ollama provider."""
 
 import pytest
 
@@ -15,7 +15,7 @@ def test_ollama_provider_returns_generated_text() -> None:
         timeout_seconds=30,
     )
 
-    response = provider.generate("Responde solo OK", config)
+    response = provider.generate("Reply with OK only", config)
 
     assert response.text
     assert response.latency_ms >= 0

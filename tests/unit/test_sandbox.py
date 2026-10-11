@@ -1,4 +1,4 @@
-"""Pruebas para la ejecucion controlada de tests generados."""
+"""Tests for bounded execution of generated tests."""
 
 from textwrap import dedent
 
@@ -9,7 +9,7 @@ from promptbench.evaluation.sandbox import normalize_generated_test_code, run_ge
 def make_case() -> EvaluationCase:
     return EvaluationCase(
         id="is-even",
-        description="Comprueba pares e impares.",
+        description="Check even and odd values.",
         source_filename="number_utils.py",
         source_code="def is_even(value: int) -> bool:\n    return value % 2 == 0\n",
         test_filename="test_number_utils.py",
@@ -57,21 +57,21 @@ def test_run_generated_tests_explains_empty_model_response() -> None:
     result = run_generated_tests(make_case(), "  ")
 
     assert result.exit_code != 0
-    assert "respuesta vacia" in result.stdout.lower()
+    assert "empty response" in result.stdout.lower()
 
 
 def test_run_generated_tests_explains_invalid_python() -> None:
     result = run_generated_tests(make_case(), "def test_broken(:\n    pass")
 
     assert result.exit_code != 0
-    assert "codigo generado invalido" in result.stdout.lower()
+    assert "invalid generated code" in result.stdout.lower()
 
 
 def test_run_generated_tests_explains_missing_test_function() -> None:
     result = run_generated_tests(make_case(), "value = 1")
 
     assert result.exit_code != 0
-    assert "no genero tests" in result.stdout.lower()
+    assert "did not generate tests" in result.stdout.lower()
 
 
 def test_normalize_generated_test_code_removes_markdown_fence() -> None:

@@ -1,1 +1,1 @@
-"""Ejecucion, medicion y comparacion de experimentos."""
+"""Experiment execution, measurement, and comparison."""

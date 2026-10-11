@@ -1,1 +1,1 @@
-"""Estrategias de construccion de prompts."""
+"""Prompt strategies."""

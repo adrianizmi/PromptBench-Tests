@@ -1,4 +1,4 @@
-"""Interfaz de linea de comandos de PromptBench."""
+"""Command-line interface for PromptBench."""
 
 import argparse
 import json
@@ -17,19 +17,19 @@ from promptbench.providers.ollama import OllamaProvider
 
 
 def main() -> None:
-    """Punto de entrada instalado como el comando promptbench."""
+    """Entry point installed as the promptbench command."""
     parser = argparse.ArgumentParser(
         prog="promptbench",
-        description="Evalua prompts que generan tests pytest.",
+        description="Evaluate prompts that generate pytest tests.",
     )
 
     subparsers = parser.add_subparsers(
         dest="command",
         required=True,
-        description="Opciones disponibles",
+        description="Available commands",
     )
 
-    run_parser = subparsers.add_parser("run", description="Comando para ejecutar las pruebas")
+    run_parser = subparsers.add_parser("run", description="Run an evaluation")
     run_parser.add_argument("--dataset", type=Path, required=True)
     run_parser.add_argument("--model", required=True)
     run_parser.add_argument("--output", type=Path)
@@ -37,13 +37,13 @@ def main() -> None:
         "--max-tokens",
         type=int,
         default=256,
-        help="Maximo de tokens generados por caso (por defecto: 256)",
+        help="Maximum tokens generated per case (default: 256)",
     )
     run_parser.add_argument(
         "--timeout",
         type=float,
         default=180.0,
-        help="Tiempo maximo en segundos para cada generacion (por defecto: 180)",
+        help="Maximum seconds for each generation (default: 180)",
     )
 
     args = parser.parse_args()

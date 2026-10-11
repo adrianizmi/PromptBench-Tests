@@ -1,4 +1,4 @@
-"""Interfaz que separa la aplicacion del proveedor concreto de LLM."""
+"""Interface separating the application from a specific LLM provider."""
 
 from typing import Protocol
 
@@ -6,8 +6,8 @@ from promptbench.domain import GeneratedResponse, GenerationConfig
 
 
 class LLMProvider(Protocol):
-    """Genera texto a partir de un prompt."""
+    """Generate text from a prompt."""
 
     def generate(self, prompt: str, config: GenerationConfig) -> GeneratedResponse:
-        """Ejecuta una generacion y la devuelve en el formato comun."""
+        """Run a generation and return it in the shared format."""
         ...
